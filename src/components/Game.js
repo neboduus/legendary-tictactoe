@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import './css/Game.css';
 
 function Square(props){    
@@ -42,7 +42,7 @@ class Game extends React.Component {
         super();
         this.state = {
             history: [{
-                squares: Array(9).fill(null)  
+                squares: Array(9).fill(null)
             }],
             isXNext: true,
             stepNumber: 0
@@ -52,7 +52,7 @@ class Game extends React.Component {
     handleClick(i){
         const history = this.state.history;
         const current = history[history.length - 1];
-        const squares = current.squares.slice();
+        const squares = current.squares.slice();      //slice() returns a shallow copy of the array -> we want this beacause we want immutable objects
         
         //ignore when box already clicked or someone already won
         if (calculateWinner(squares) || squares[i]) {
@@ -61,7 +61,7 @@ class Game extends React.Component {
         squares[i] = this.state.isXNext ? 'X' : 'O';
         this.setState({
             history: history.concat([{
-                squares: squares
+                squares: squares,
             }]),
             isXNext: !this.state.isXNext,
             stepNumber: history.length
@@ -78,11 +78,12 @@ class Game extends React.Component {
     render() {            
         const history = this.state.history;
         const current = history[this.state.stepNumber];
-        const winner = calculateWinner(current.squares);  
+        const winner = calculateWinner(current.squares); 
+        var player = current.player;
         
         //react element for showing moves
         const moves = history.map((step, move) => {
-            const desc = move ? 'Move #' + move : 'Game start';
+            const desc = move ? 'Move (' + player + "," + move + ')' : 'Game start';
             return (
                 <li key={move}>
                     <a href="#" onClick={() => this.jumpTo(move)}>{desc}</a>
@@ -101,6 +102,7 @@ class Game extends React.Component {
             <div className="game">
                 <div className="game-board">
                     <Board 
+                        player={player}
                         squares={current.squares} 
                         onClick={(i) => this.handleClick(i)} 
                     />
@@ -110,9 +112,6 @@ class Game extends React.Component {
                         {status}
                         <ol>{moves}</ol>
                     </div>
-                <ol>
-                    {/* TODO */}
-                </ol>
                 </div>
             </div>
         );
