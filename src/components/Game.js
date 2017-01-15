@@ -123,14 +123,26 @@ class Game extends React.Component {
         
         //react element for showing moves
         const moves = squaresHistory.map((step, move) => {
+            const checkStepNumber = this.state.stepNumber===move ? 1 : 0;
             const player = step.playerWasX ? 1 : 2;
             const _move = this.getPlayerMovesNumber(player, step.situation);
             const desc = move ? 'Move (' + player + ',' + _move + ')' : 'Game start';
-            return (
-                <li key={move}>
-                    <a href="#" onClick={() => this.jumpTo(move)}>{desc}</a>
-                </li>
-            );
+            
+            if (checkStepNumber){
+                return(
+                    <b key={move}>
+                        <li>
+                            <a href="#" onClick={() => this.jumpTo(move)}>{desc}</a>
+                        </li>
+                    </b>
+                );
+            }else{
+                return(
+                    <li key={move}>
+                        <a href="#" onClick={() => this.jumpTo(move)}>{desc}</a>
+                    </li>               
+                );
+            }
         });
 
         var f = this.state.history.squares[this.state.stepNumber].playerWasX;
