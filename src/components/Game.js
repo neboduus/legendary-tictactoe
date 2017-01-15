@@ -9,13 +9,34 @@ function Square(props){
     );
 }
 
+
 class Board extends React.Component {    
     renderSquare(i) {
         return <Square value={this.props.squares[i]} onClick={() => this.props.onClick(i)} />;
     }
     
-    render() {  
-        return (
+    /*
+    createRows(i){
+        
+        var index=0;
+        var rows = Array(i);
+        
+        for (var index; index++; index<i){
+            rows.push(() => {
+               return(
+                   {    <div>
+                       renderSquare(i)
+                        </div>
+                   }
+               ); 
+            });
+        }
+        return rows;
+    }
+    */
+    
+    render(){    
+        return(
             <div>
                 <div className="board-row">
                     {this.renderSquare(0)}
