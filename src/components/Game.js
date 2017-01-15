@@ -41,57 +41,106 @@ class Game extends React.Component {
     constructor(){
         super();
         this.state = {
-            history: [{
-                squares: Array(9).fill(null)
-            }],
+            history: {
+                squares: [{
+                    situation: Array(9).fill(null),
+                    playerWasX: false
+                }]
+            },
             isXNext: true,
-            stepNumber: 0
+            stepNumber: 0,
         }
     }
     
     handleClick(i){
+        //raccolgo tutta la storia delle mosse
         const history = this.state.history;
-        const current = history[history.length - 1];
-        const squares = current.squares.slice();      //slice() returns a shallow copy of the array -> we want this beacause we want immutable objects
+        //recupero l'oggetto squares che è un Array[] di oggetti {sitation: someVar, player: true/false}
+        var squaresHistory = history.squares.slice();
+        //prendo l'ultima situazione(quadrati+player)
+        var currentSquaresHistory = squaresHistory[squaresHistory.length - 1];
+        //raccolgo la situazione solo dei quadrati
+        var currentSquaresSituation = currentSquaresHistory.situation.slice();
+        var currentPlayer = !currentSquaresHistory.playerWasX;
         
         //ignore when box already clicked or someone already won
-        if (calculateWinner(squares) || squares[i]) {
+        if (calculateWinner(currentSquaresSituation) || currentSquaresSituation[i]) {
             return;
         }
-        squares[i] = this.state.isXNext ? 'X' : 'O';
-        this.setState({
-            history: history.concat([{
-                squares: squares,
-            }]),
-            isXNext: !this.state.isXNext,
-            stepNumber: history.length
-        });
+        //modifico la situazione attinente al click
+        currentSquaresSituation[i] = this.state.isXNext ? 'X' : 'O';
+        //creo una nuova situazione
+        var newSituation = [{
+            situation: currentSquaresSituation,
+            playerWasX: currentPlayer
+        }];
+        //la aggiungo alle situazioni precedenti
+        squaresHistory = squaresHistory.concat(newSituation);
+        //creo una nuova storia
+        var newHistory = {
+            squares: squaresHistory
+        }
+
+        //modifico lo stato
+        this.setState((prevState) => ({
+            history: newHistory,
+            isXNext: !prevState.isXNext,
+            stepNumber: prevState.history.squares.length
+        }));
     }
     
     jumpTo(step) {
-        this.setState({
+        this.setState((prevState) => ({
             stepNumber: step,
             xIsNext: (step % 2) ? false : true,
-        });
+        }));
+    }
+    
+    getPlayerMovesNumber(player, situation){
+        var counter = 0;
+        var i = 0;
+        if (player){
+            for(i=0; i<situation.length; i++){
+                if (situation[i]==='X'){
+                    counter++;
+                }
+            }
+        }else{
+            for(i=0; i<situation.length; i++){
+                if (situation[i]==='O'){
+                    counter++;
+                }
+            }
+        }
+        
+        return counter;
     }
     
     render() {            
-        const history = this.state.history;
-        const current = history[this.state.stepNumber];
-        const winner = calculateWinner(current.squares); 
-        var player = current.player;
+        const squaresHistory = this.state.history.squares;
+        const currentSquares = squaresHistory[this.state.stepNumber].situation;
+        const winner = calculateWinner(currentSquares); 
         
         //react element for showing moves
-        const moves = history.map((step, move) => {
-            const desc = move ? 'Move (' + player + "," + move + ')' : 'Game start';
+        const moves = squaresHistory.map((step, move) => {
+            const player = step.playerWasX ? 1 : 2;
+            const _move = this.getPlayerMovesNumber(player, step.situation);
+            const desc = move ? 'Move (' + player + ',' + _move + ')' : 'Game start';
             return (
                 <li key={move}>
                     <a href="#" onClick={() => this.jumpTo(move)}>{desc}</a>
                 </li>
             );
         });
-        
-        let status = this.state.isXNext ? 'Next player: X' : 'Next player: O';        
+
+        var f = this.state.history.squares[this.state.stepNumber].playerWasX;
+        let status;
+        if (f===true){
+            status = 'Next player: X';
+        }else{
+            status = 'Next player: O';
+        }    
+
         if(winner){
             status = 'Winner: ' + winner;
         }else{
@@ -102,8 +151,7 @@ class Game extends React.Component {
             <div className="game">
                 <div className="game-board">
                     <Board 
-                        player={player}
-                        squares={current.squares} 
+                        squares={currentSquares} 
                         onClick={(i) => this.handleClick(i)} 
                     />
                 </div>
