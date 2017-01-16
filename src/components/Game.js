@@ -32,12 +32,14 @@ class Board extends React.Component {
     }
     
     render(){   
-        //var index1 = this.fillMod3(Array(3));
-        
+        var index1 = this.fillMod3(Array(3));
+        /*
         var index1 = this.fillN(Array(3));   
         var index2 = this.fillN(Array(3));
+        */
         
         return(
+            /*
             <div>
                 {index1.map((e1,i1) => {
                     return(
@@ -49,8 +51,8 @@ class Board extends React.Component {
                     )    
                 })}
             </div>
-            
-            /*
+            */    
+        
             <div>
                 {index1.map((e,i) => {
                     return(
@@ -62,7 +64,7 @@ class Board extends React.Component {
                     )    
                 })}
             </div>
-            */
+            
             
             /*
             <div>
@@ -217,6 +219,12 @@ class Game extends React.Component {
                         squares={currentSquares} 
                         onClick={(i) => this.handleClick(i)} 
                     />
+                    <br/>
+                    <label>Order Moves</label><br/>
+                    <label className="switch">
+                        <input type="checkbox" />
+                        <div className="slider"></div>
+                    </label>
                 </div>
                 <div className="game-info">
                     <div>
