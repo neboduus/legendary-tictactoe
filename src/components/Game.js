@@ -12,7 +12,7 @@ function Square(props){
 
 class Board extends React.Component {     
     renderSquare(i) {
-        return <Square value={this.props.squares[i]} onClick={() => this.props.onClick(i)} />;
+        return <Square key={i} value={this.props.squares[i]} onClick={() => this.props.onClick(i)} />;
     }
     
     fillN(vector){
@@ -23,80 +23,48 @@ class Board extends React.Component {
     }
     
     fillMod3(vector){
-        var cont=0;
-        for (var i=0; i<vector.length; i++){
-            vector[i] = cont;
-            cont += 3;
+        var count=0;
+        for(var i=0; i<vector.length; i++){
+            vector[i]=count;
+            count += 3;
         }
         return vector;
     }
     
-    createCells(i){
-        if(i%3){return;}
-        var index = this.fillN(Array(i));
-        var cells = [];
-        console.log("cells requested " + i);
-        index.forEach(function(i){
-            cells.push(() => {
-                return(
-                    <div>
-                        {this.renderSquare(i)}
-                    </div>
-                );
-            });
-        });
-        console.log("cells created " + cells.length);
-        return cells;
-
-    }
-    
-    createRows(cells){
-        var index = this.fillMod3(Array(3));
-        var rows = []
-        console.log("rows requested " + index.length);
-        index.forEach(function(i){
-            rows.push(() => {
-                return(
-                    <div>
-                        {cells[i]}
-                        {cells[i+1]}
-                        {cells[i+2]}
-                    </div>
-                );
-            });
-        });
-        console.log("rows created " + rows.length);
-        return rows;
-
-    }
-    
-    render(){    
-        var cells = this.createCells(9);
-        var rows = this.createRows(cells);
-        var board = [];
-        var index = this.fillN(Array(1));
+    render(){   
+        //var index1 = this.fillMod3(Array(3));
         
-        index.forEach(function(i){
-            board.push(() => {
-                return(
-                    <div>{rows[i]}</div>
-                );
-            });
-        })
+        var index1 = this.fillN(Array(3));   
+        var index2 = this.fillN(Array(3));
         
-        console.log("cells in render " + cells.length);
-        console.log("rows in render " + rows.length);
-        console.log("board in render " + board.length);
-        
-
         return(
             <div>
-                {board[0]}
+                {index1.map((e1,i1) => {
+                    return(
+                        <div key={i1} className="board-row">
+                            {index2.map((e2, i2) => {
+                                return(this.renderSquare(i2))
+                            })}
+                        </div>
+                    )    
+                })}
             </div>
-        );
-        
-        /*
-        return(
+            
+            /*
+            <div>
+                {index1.map((e,i) => {
+                    return(
+                        <div key={i} className="board-row">
+                            {this.renderSquare(e)}
+                            {this.renderSquare(e+1)}
+                            {this.renderSquare(e+2)}
+                        </div>
+                    )    
+                })}
+            </div>
+            */
+            
+            /*
             <div>
                 <div className="board-row">
                     {this.renderSquare(0)}
@@ -114,8 +82,8 @@ class Board extends React.Component {
                     {this.renderSquare(8)}
                 </div>
             </div>
+            */
         );
-        */
         
     }
 }
